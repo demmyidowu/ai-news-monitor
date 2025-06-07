@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 AI News Monitor - Main Workflow
 Run this script weekly to generate AI news summaries
@@ -82,10 +81,10 @@ def main():
             f.write(text_summary)
         logger.info(f"Text summary saved to {text_output}")
         
-        # Create Word document with custom name
+        # Create Word document with custom name (no spaces for GitHub compatibility)
         doc_output = summarizer.create_word_document(
             relevant_articles, 
-            custom_name="AI Weekly News Summary"
+            custom_name="AI_Weekly_News_Summary"
         )
         
         # Step 5: Generate NotebookLM Assets
