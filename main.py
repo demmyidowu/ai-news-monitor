@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 AI News Monitor - Main Workflow
 Run this script weekly to generate AI news summaries
@@ -84,12 +85,32 @@ def main():
         # Create Word document with custom name
         doc_output = summarizer.create_word_document(
             relevant_articles, 
-            custom_name="AI_Industry_Weekly"
+            custom_name="AI Weekly News Summary"
         )
+        
+        # Step 5: Generate NotebookLM Assets
+        try:
+            sys.path.append('.')  # Add current directory to path
+            from notebooklm_generator import create_notebooklm_assets
+            
+            logger.info("📝 Creating NotebookLM-optimized script and summary...")
+            script_path, summary_path = create_notebooklm_assets(relevant_articles)
+            
+            logger.info(f"✅ NotebookLM Script: {script_path}")
+            logger.info(f"✅ NotebookLM Summary: {summary_path}")
+            logger.info("🎙️ Ready for NotebookLM podcast generation!")
+                
+        except ImportError:
+            logger.info("💡 To enable NotebookLM generation, save the NotebookLM generator code as 'notebooklm_generator.py'")
+        except Exception as e:
+            logger.warning(f"NotebookLM generation error: {e}")
         
         logger.info("AI News summary generation completed successfully!")
         logger.info(f"Text summary: {text_output}")
         logger.info(f"Word document: {doc_output}")
+        if 'script_path' in locals() and script_path:
+            logger.info(f"📝 NotebookLM Script: {script_path}")
+            logger.info(f"📄 NotebookLM Summary: {summary_path}")
         logger.info(f"Total articles processed: {len(relevant_articles)}")
         
     except Exception as e:
