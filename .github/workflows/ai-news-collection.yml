@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       days_back:
-        description: 'Number of days to look back'
+        description: 'Number of days to look back for articles'
         required: false
         default: '7'
         type: string
@@ -45,7 +45,7 @@ jobs:
       run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
     
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ai-news-summary-${{ steps.date.outputs.date }}
         path: |
@@ -57,32 +57,46 @@ jobs:
     
     - name: Create Release
       if: success()
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: ai-news-${{ steps.date.outputs.date }}
-        release_name: AI News Summary - ${{ steps.date.outputs.date }}
+        name: AI News Summary - ${{ steps.date.outputs.date }}
         body: |
           # AI Industry Weekly Summary
           
           **Generated:** ${{ steps.date.outputs.date }}
           
-          Files for NotebookLM:
-          - 📝 NotebookLM Script (.md file)
-          - 📄 Summary (.txt file)
+          ## For NotebookLM Podcast:
+          1. Download the `.md` and `.txt` files below
+          2. Upload both to [NotebookLM](https://notebooklm.google.com/)
+          3. Click "Generate Podcast" to create AI conversation
           
-          Upload both to NotebookLM to generate your AI podcast!
+          ## Files:
+          - 📝 **NotebookLM_Script_XX.md** - Rich discussion script
+          - 📄 **NotebookLM_Summary_XX.txt** - Concise summary  
+          - 📋 **AI_Industry_Weekly_XX.txt** - Full text summary
+          - 📄 **AI_Weekly_News_Summary_XX.docx** - Word document
+          - 📊 **articles_XX.json** - Raw data
+        files: |
+          outputs/AI_Industry_Weekly_${{ steps.date.outputs.date }}.txt
+          outputs/AI Weekly News Summary_${{ steps.date.outputs.date }}.docx
+          outputs/NotebookLM_Script_${{ steps.date.outputs.date }}.md
+          outputs/NotebookLM_Summary_${{ steps.date.outputs.date }}.txt
+          data/articles_${{ steps.date.outputs.date }}.json
         draft: false
         prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Upload Release Assets
+    - name: Notify completion
       if: success()
       run: |
-        # Upload key files to release
-        for file in outputs/NotebookLM_*.md outputs/NotebookLM_*.txt outputs/AI_*.txt outputs/AI*.docx; do
-          if [ -f "$file" ]; then
-            echo "Would upload: $file"
-          fi
-        done
+        echo "✅ AI News summary generated successfully!"
+        echo "📁 Files available in release: ai-news-${{ steps.date.outputs.date }}"
+        echo "🎙️ Ready for NotebookLM podcast generation"
+    
+    - name: Notify failure
+      if: failure()
+      run: |
+        echo "❌ AI News collection failed"
+        echo "📧 Check the workflow logs for details"
