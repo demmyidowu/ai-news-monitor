@@ -1,0 +1,199 @@
+name: Weekly AI News Collection
+
+# Trigger the workflow
+on:
+  schedule:
+    # Run every Sunday at 9 AM UTC (adjust timezone as needed)
+    - cron: '0 9 * * 0'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      days_back:
+        description: 'Number of days to look back for articles'
+        required: false
+        default: '7'
+        type: string
+
+# Set permissions
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  collect-ai-news:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    # Set up Python environment
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    # Install system dependencies
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+    
+    # Install Python dependencies
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Create requirements.txt if it doesn't exist
+    - name: Create requirements.txt
+      run: |
+        if [ ! -f requirements.txt ]; then
+          cat > requirements.txt << EOF
+        feedparser==6.0.10
+        requests==2.31.0
+        python-docx==0.8.11
+        python-dateutil==2.8.2
+        beautifulsoup4==4.12.2
+        lxml==4.9.3
+        EOF
+        fi
+    
+    # Install dependencies from requirements.txt
+    - name: Install from requirements
+      run: |
+        pip install -r requirements.txt
+    
+    # Create necessary directories
+    - name: Create directories
+      run: |
+        mkdir -p data outputs logs config src
+    
+    # Run the AI news collection
+    - name: Collect AI News
+      env:
+        DAYS_BACK: ${{ github.event.inputs.days_back || '7' }}
+      run: |
+        python main.py
+    
+    # Get current date for file naming
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+    
+    # Upload artifacts (files that persist after workflow)
+    - name: Upload generated files
+      uses: actions/upload-artifact@v3
+      with:
+        name: ai-news-summary-${{ steps.date.outputs.date }}
+        path: |
+          outputs/*.txt
+          outputs/*.docx
+          outputs/*.md
+          data/*.json
+        retention-days: 30
+    
+    # Create a release with the files (optional - makes files easily downloadable)
+    - name: Create Release
+      if: success()
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ai-news-${{ steps.date.outputs.date }}
+        release_name: AI News Summary - ${{ steps.date.outputs.date }}
+        body: |
+          # AI Industry Weekly Summary
+          
+          **Generated:** ${{ steps.date.outputs.date }}
+          
+          This release contains:
+          - 📄 Text summary for reading
+          - 📋 Word document for sharing
+          - 📝 NotebookLM script for podcast generation
+          - 📊 Raw data in JSON format
+          
+          ## How to use with NotebookLM:
+          1. Download the NotebookLM script and summary files
+          2. Upload both to [NotebookLM](https://notebooklm.google.com/)
+          3. Click "Generate Podcast" to create an AI conversation
+          
+          ## Files included:
+          - `AI_Industry_Weekly_YYYYMMDD.txt` - Text summary
+          - `AI Weekly News Summary_YYYYMMDD.docx` - Word document  
+          - `NotebookLM_Script_YYYYMMDD.md` - Rich script for podcast
+          - `NotebookLM_Summary_YYYYMMDD.txt` - Concise summary for context
+          - `articles_YYYYMMDD.json` - Raw article data
+        draft: false
+        prerelease: false
+    
+    # Upload files to the release
+    - name: Upload Text Summary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./outputs/AI_Industry_Weekly_${{ steps.date.outputs.date }}.txt
+        asset_name: AI_Industry_Weekly_${{ steps.date.outputs.date }}.txt
+        asset_content_type: text/plain
+    
+    - name: Upload Word Document
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./outputs/AI Weekly News Summary_${{ steps.date.outputs.date }}.docx
+        asset_name: AI_Weekly_News_Summary_${{ steps.date.outputs.date }}.docx
+        asset_content_type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+    
+    - name: Upload NotebookLM Script
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./outputs/NotebookLM_Script_${{ steps.date.outputs.date }}.md
+        asset_name: NotebookLM_Script_${{ steps.date.outputs.date }}.md
+        asset_content_type: text/markdown
+    
+    - name: Upload NotebookLM Summary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./outputs/NotebookLM_Summary_${{ steps.date.outputs.date }}.txt
+        asset_name: NotebookLM_Summary_${{ steps.date.outputs.date }}.txt
+        asset_content_type: text/plain
+    
+    - name: Upload Raw Data
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./data/articles_${{ steps.date.outputs.date }}.json
+        asset_name: articles_${{ steps.date.outputs.date }}.json
+        asset_content_type: application/json
+    
+    # Optional: Send notification (you can add Slack, Discord, email, etc.)
+    - name: Notify completion
+      if: success()
+      run: |
+        echo "✅ AI News summary generated successfully!"
+        echo "📁 Files available in release: ai-news-${{ steps.date.outputs.date }}"
+        echo "🎙️ Ready for NotebookLM podcast generation"
+    
+    # Handle failures
+    - name: Notify failure
+      if: failure()
+      run: |
+        echo "❌ AI News collection failed"
+        echo "📧 Check the workflow logs for details"

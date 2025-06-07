@@ -1,0 +1,88 @@
+name: Weekly AI News Collection
+
+on:
+  schedule:
+    - cron: '0 9 * * 0'  # Every Sunday at 9 AM UTC
+  workflow_dispatch:
+    inputs:
+      days_back:
+        description: 'Number of days to look back'
+        required: false
+        default: '7'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  collect-ai-news:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Create directories
+      run: |
+        mkdir -p data outputs logs
+    
+    - name: Collect AI News
+      run: python main.py
+    
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ai-news-summary-${{ steps.date.outputs.date }}
+        path: |
+          outputs/*.txt
+          outputs/*.docx
+          outputs/*.md
+          data/*.json
+        retention-days: 30
+    
+    - name: Create Release
+      if: success()
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ai-news-${{ steps.date.outputs.date }}
+        release_name: AI News Summary - ${{ steps.date.outputs.date }}
+        body: |
+          # AI Industry Weekly Summary
+          
+          **Generated:** ${{ steps.date.outputs.date }}
+          
+          Files for NotebookLM:
+          - 📝 NotebookLM Script (.md file)
+          - 📄 Summary (.txt file)
+          
+          Upload both to NotebookLM to generate your AI podcast!
+        draft: false
+        prerelease: false
+    
+    - name: Upload Release Assets
+      if: success()
+      run: |
+        # Upload key files to release
+        for file in outputs/NotebookLM_*.md outputs/NotebookLM_*.txt outputs/AI_*.txt outputs/AI*.docx; do
+          if [ -f "$file" ]; then
+            echo "Would upload: $file"
+          fi
+        done

@@ -1,0 +1,255 @@
+{
+    "rss_feeds": [
+        {
+            "name": "Google AI Blog",
+            "url": "https://ai.googleblog.com/feeds/posts/default",
+            "priority": "high",
+            "category": "industry"
+        },
+        {
+            "name": "OpenAI Blog",
+            "url": "https://openai.com/blog/rss.xml",
+            "priority": "high",
+            "category": "industry"
+        },
+        {
+            "name": "Anthropic News",
+            "url": "https://www.anthropic.com/news/rss",
+            "priority": "high",
+            "category": "industry"
+        },
+        {
+            "name": "DeepMind Blog",
+            "url": "https://deepmind.com/blog/rss.xml",
+            "priority": "high",
+            "category": "research"
+        },
+        {
+            "name": "The New York Times - Technology",
+            "url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+            "priority": "high",
+            "category": "news"
+        },
+        {
+            "name": "The New York Times - Science",
+            "url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
+            "priority": "high",
+            "category": "news"
+        },
+        {
+            "name": "Daily News - Technology",
+            "url": "https://www.nydailynews.com/arc/outboundfeeds/rss/category/technology/",
+            "priority": "medium",
+            "category": "news"
+        },
+        {
+            "name": "TechCrunch AI",
+            "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+            "priority": "high",
+            "category": "industry"
+        },
+        {
+            "name": "MIT Technology Review",
+            "url": "https://www.technologyreview.com/feed/",
+            "priority": "high",
+            "category": "analysis"
+        },
+        {
+            "name": "VentureBeat AI",
+            "url": "https://venturebeat.com/ai/feed/",
+            "priority": "medium",
+            "category": "industry"
+        },
+        {
+            "name": "Wired AI",
+            "url": "https://www.wired.com/feed/tag/ai/latest/rss",
+            "priority": "medium",
+            "category": "analysis"
+        },
+        {
+            "name": "The Verge AI",
+            "url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
+            "priority": "medium",
+            "category": "news"
+        },
+        {
+            "name": "Ars Technica AI",
+            "url": "https://feeds.arstechnica.com/arstechnica/technology-lab",
+            "priority": "medium",
+            "category": "analysis"
+        },
+        {
+            "name": "AI News",
+            "url": "https://www.artificialintelligence-news.com/feed/",
+            "priority": "medium",
+            "category": "industry"
+        },
+        {
+            "name": "Machine Learning Mastery",
+            "url": "https://machinelearningmastery.com/feed/",
+            "priority": "low",
+            "category": "education"
+        },
+        {
+            "name": "Towards Data Science",
+            "url": "https://towardsdatascience.com/feed",
+            "priority": "low",
+            "category": "education"
+        },
+        {
+            "name": "Stanford HAI News",
+            "url": "https://hai.stanford.edu/news/rss.xml",
+            "priority": "medium",
+            "category": "research"
+        },
+        {
+            "name": "Microsoft AI Blog",
+            "url": "https://blogs.microsoft.com/ai/feed/",
+            "priority": "high",
+            "category": "industry"
+        },
+        {
+            "name": "Meta AI Blog",
+            "url": "https://ai.facebook.com/blog/rss/",
+            "priority": "high",
+            "category": "research"
+        },
+        {
+            "name": "NVIDIA AI Blog",
+            "url": "https://blogs.nvidia.com/ai/feed/",
+            "priority": "high",
+            "category": "industry"
+        },
+        {
+            "name": "Reuters Technology",
+            "url": "https://www.reutersagency.com/feed/?best-topics=tech",
+            "priority": "low",
+            "category": "news"
+        },
+        {
+            "name": "BBC Technology",
+            "url": "http://feeds.bbci.co.uk/news/technology/rss.xml",
+            "priority": "medium",
+            "category": "news"
+        },
+        {
+            "name": "The Guardian Technology",
+            "url": "https://www.theguardian.com/technology/rss",
+            "priority": "low",
+            "category": "news"
+        }
+    ],
+    "keywords": [
+        "GPT",
+        "LLM",
+        "RAg",
+        "SFT",
+        "Deepfake",
+        "Deepfake detection",
+        "safety",
+        "large language model",
+        "neural network",
+        "machine learning",
+        "deep learning",
+        "AI model",
+        "transformer",
+        "artificial intelligence",
+        "generative AI",
+        "ChatGPT",
+        "Claude",
+        "computer vision",
+        "natural language processing",
+        "NLP",
+        "reinforcement learning",
+        "foundation model",
+        "multimodal",
+        "AI safety",
+        "AI ethics",
+        "AI governance",
+        "AGI",
+        "autonomous",
+        "robotics",
+        "AI chip",
+        "AI hardware",
+        "prompt engineering",
+        "fine-tuning",
+        "RLHF",
+        "diffusion model",
+        "stable diffusion",
+        "DALL-E",
+        "AI startup",
+        "AI funding",
+        "AI regulation"
+    ],
+    "advanced_filters": {
+        "high_priority_keywords": [
+            "breakthrough",
+            "milestone",
+            "first",
+            "new",
+            "novel",
+            "state-of-the-art",
+            "SOTA",
+            "record",
+            "beats",
+            "outperforms"
+        ],
+        "company_keywords": [
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "Meta",
+            "Microsoft",
+            "Apple",
+            "Amazon",
+            "NVIDIA",
+            "Tesla",
+            "DeepMind",
+            "Stability AI",
+            "Midjourney",
+            "Cohere",
+            "Hugging Face"
+        ],
+        "exclude_keywords": [
+            "crypto",
+            "blockchain",
+            "NFT",
+            "web3",
+            "metaverse",
+            "stock price",
+            "earnings",
+            "quarterly",
+            "revenue"
+        ],
+        "categories": {
+            "research": [
+                "paper",
+                "study",
+                "research",
+                "arxiv",
+                "academic"
+            ],
+            "industry": [
+                "company",
+                "startup",
+                "funding",
+                "acquisition",
+                "product"
+            ],
+            "policy": [
+                "regulation",
+                "law",
+                "policy",
+                "government",
+                "ethics"
+            ],
+            "education": [
+                "tutorial",
+                "guide",
+                "how-to",
+                "course",
+                "learning"
+            ]
+        }
+    }
+}
